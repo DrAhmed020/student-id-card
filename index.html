@@ -17,22 +17,38 @@
         canvas {
             margin-top: 20px;
             border: 1px solid #ddd;
-            position: relative; /* للتأكد من أن الزر لا يختفي خلف الصورة */
-            z-index: 1; /* يجعل الصورة في الخلفية */
         }
-        #downloadBtn {
+        .button-container {
+            display: flex;
+            justify-content: center;
             margin-top: 20px;
+            gap: 10px; /* إضافة مساحة بين الأزرار */
+        }
+        button {
             padding: 10px 20px;
             font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #generateBtn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        #downloadBtn {
             background-color: #007BFF;
             color: white;
             border: none;
-            border-radius: 5px;
+            cursor: not-allowed;
+        }
+        #downloadBtn:enabled {
             cursor: pointer;
-            z-index: 2; /* يجعل الزر في المقدمة */
         }
         #downloadBtn:hover {
             background-color: #0056b3;
+        }
+        #generateBtn:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -49,17 +65,20 @@
             <input type="text" id="studentGrade" required>
         </label>
         <br><br>
-        <button type="submit">إنشاء البطاقة</button>
+        <div class="button-container">
+            <button type="submit" id="generateBtn">إنشاء البطاقة</button>
+            <button type="button" id="downloadBtn" disabled>حفظ الصورة</button> <!-- الزر غير مفعل بشكل افتراضي -->
+        </div>
     </form>
 
     <canvas id="studentCard"></canvas>
-    <button id="downloadBtn">حفظ الصورة</button> <!-- الزر مرئي الآن دائماً -->
 
     <script>
         const form = document.getElementById('studentForm');
         const canvas = document.getElementById('studentCard');
         const downloadBtn = document.getElementById('downloadBtn');
         const ctx = canvas.getContext('2d');
+        const generateBtn = document.getElementById('generateBtn');
 
         // تحميل الصورة الأساسية
         const baseImage = new Image();
@@ -96,6 +115,9 @@
                 ctx.fillText(studentName, 400, 460); // تعديل الإحداثيات لتناسب مكان النص
                 ctx.fillText(studentGrade, 400, 510); // تعديل الإحداثيات لتناسب مكان النص
             });
+
+            // تفعيل زر حفظ الصورة بعد إنشاء البطاقة
+            downloadBtn.disabled = false;
         });
 
         // وظيفة تحميل الصورة
