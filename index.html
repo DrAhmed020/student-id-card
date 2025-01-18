@@ -18,6 +18,19 @@
             margin-top: 20px;
             border: 1px solid #ddd;
         }
+        #downloadBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #downloadBtn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -37,10 +50,12 @@
     </form>
 
     <canvas id="studentCard"></canvas>
+    <button id="downloadBtn" style="display: none;">حفظ الصورة</button> <!-- زر الحفظ -->
 
     <script>
         const form = document.getElementById('studentForm');
         const canvas = document.getElementById('studentCard');
+        const downloadBtn = document.getElementById('downloadBtn');
         const ctx = canvas.getContext('2d');
 
         // تحميل الصورة الأساسية
@@ -75,9 +90,21 @@
                 ctx.direction = 'rtl'; // ضبط اتجاه النص ليكون من اليمين إلى اليسار
 
                 // إضافة النص إلى الصورة
-            ctx.fillText(studentName, 400, 460); // تعديل الإحداثيات لتناسب مكان النص
-            ctx.fillText(studentGrade, 400, 510); // تعديل الإحداثيات لتناسب مكان النص
+                ctx.fillText(studentName, 400, 460); // تعديل الإحداثيات لتناسب مكان النص
+                ctx.fillText(studentGrade, 400, 510); // تعديل الإحداثيات لتناسب مكان النص
+
+                // عرض زر الحفظ بعد إنشاء البطاقة
+                downloadBtn.style.display = 'inline-block';
             });
+        });
+
+        // وظيفة تحميل الصورة
+        downloadBtn.addEventListener('click', () => {
+            const image = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = 'student_card.png'; // اسم الملف المحفوظ
+            link.click();
         });
     </script>
 </body>
