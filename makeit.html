@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بطاقة تعريف الطالب</title>
+    <style>
+        @font-face {
+            font-family: 'TufuliArabic';
+            src: url('alfont_com_TufuliArabicDEMO-Medium.ttf') format('truetype');
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        canvas {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+        #downloadBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #downloadBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>بطاقة تعريف الطالب</h1>
+    <form id="studentForm">
+        <label>
+            اسم الطالب:
+            <input type="text" id="studentName" required>
+        </label>
+        <br><br>
+        <label>
+            المرحلة:
+            <input type="text" id="studentGrade" required>
+        </label>
+        <br><br>
+        <button type="submit">إنشاء البطاقة</button>
+    </form>
+
+    <canvas id="studentCard"></canvas>
+    <button id="downloadBtn" style="display: none;">حفظ الصورة</button> <!-- زر الحفظ -->
+
+    <script>
+        const form = document.getElementById('studentForm');
+        const canvas = document.getElementById('studentCard');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const ctx = canvas.getContext('2d');
+
+        // تحميل الصورة الأساسية
+        const baseImage = new Image();
+        baseImage.src = '1.png'; // استخدام الصورة المرفوعة
+
+        baseImage.onload = () => {
+            canvas.width = baseImage.width;
+            canvas.height = baseImage.height;
+            ctx.drawImage(baseImage, 0, 0);
+        };
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // إعادة رسم الصورة الأساسية
+            ctx.drawImage(baseImage, 0, 0);
+
+            // الحصول على بيانات المستخدم
+            const studentName = document.getElementById('studentName').value;
+            const studentGrade = document.getElementById('studentGrade').value;
+
+            // تحميل الخط المخصص
+            const customFont = new FontFace('TufuliArabic', 'url(alfont_com_TufuliArabicDEMO-Medium.ttf)');
+            customFont.load().then((font) => {
+                document.fonts.add(font);
+
+                // إعدادات النص
+                ctx.font = '28px TufuliArabic';
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'right'; // جعل النص يبدأ من الجهة اليمنى
+                ctx.direction = 'rtl'; // ضبط اتجاه النص ليكون من اليمين إلى اليسار
+
+                // إضافة النص إلى الصورة
+                ctx.fillText(studentName, 400, 460); // تعديل الإحداثيات لتناسب مكان النص
+                ctx.fillText(studentGrade, 400, 510); // تعديل الإحداثيات لتناسب مكان النص
+
+                // عرض زر الحفظ بعد إنشاء البطاقة
+                downloadBtn.style.display = 'inline-block';
+            });
+        });
+
+        // وظيفة تحميل الصورة
+        downloadBtn.addEventListener('click', () => {
+            const image = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = 'student_card.png'; // اسم الملف المحفوظ
+            link.click();
+        });
+    </script>
+</body>
+</html>
