@@ -50,7 +50,7 @@
     </form>
 
     <canvas id="studentCard"></canvas>
-    <button id="downloadBtn" style="display: none;">حفظ الصورة</button> <!-- زر الحفظ -->
+    <button id="downloadBtn">حفظ الصورة</button> <!-- زر الحفظ مرئي الآن دائماً -->
 
     <script>
         const form = document.getElementById('studentForm');
@@ -92,9 +92,6 @@
                 // إضافة النص إلى الصورة
                 ctx.fillText(studentName, 400, 460); // تعديل الإحداثيات لتناسب مكان النص
                 ctx.fillText(studentGrade, 400, 510); // تعديل الإحداثيات لتناسب مكان النص
-
-                // عرض زر الحفظ بعد إنشاء البطاقة
-                downloadBtn.style.display = 'inline-block';
             });
         });
 
