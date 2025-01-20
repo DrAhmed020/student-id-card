@@ -1,105 +1,124 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق الاشتراكات</title>
+    <title>تطبيق إدارة الاشتراكات</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .app-container {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
         }
-        .button {
+        .app-container {
+            text-align: center;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+        }
+        .app {
+            background-color: #007bff;
+            color: white;
             padding: 15px;
             margin: 10px;
-            font-size: 18px;
+            border-radius: 10px;
             cursor: pointer;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            gap: 10px;
         }
-        .back-btn {
-            background-color: #ff4500;
+        .app i {
+            font-size: 24px;
         }
-        .content {
+        .message {
             margin-top: 20px;
-            padding: 15px;
-            background-color: #fff;
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+        }
+        .back-button {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
             border-radius: 5px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 600px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #218838;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #888;
         }
     </style>
 </head>
 <body>
-
     <div class="app-container">
-        <h1>تطبيق الاشتراكات</h1>
-        <button class="button" onclick="showSubscriptionApp()">معرفة الاشتراكات والأسعار</button>
-        <button class="button" onclick="showRenewalApp()">تجديد الاشتراك</button>
-        <button class="button" onclick="showExpiryApp()">موعد الانتهاء</button>
+        <h1>إدارة الاشتراكات</h1>
+
+        <div class="app" onclick="loadFile('subscriptions.txt')">
+            <i class="fas fa-file-alt"></i> معرفة الاشتراكات والأسعار
+        </div>
+
+        <div class="app" onclick="loadFile('msg.txt')">
+            <i class="fas fa-sync-alt"></i> تجديد الاشتراك
+        </div>
+
+        <div class="app" onclick="loadFile('finsh.txt')">
+            <i class="fas fa-calendar-alt"></i> موعد الانتهاء
+        </div>
+
+        <div class="message" id="message">
+            <!-- سيتم تحميل الرسالة هنا -->
+        </div>
+
+        <div class="button-container">
+            <button class="back-button" onclick="goBack()">رجوع</button>
+        </div>
     </div>
 
-    <div id="appContent" class="content"></div>
+    <footer>
+        <hr>
+        حقوق الطبع والنشر © 2025 جميع الحقوق محفوظة
+    </footer>
 
+    <!-- تحميل مكتبة FontAwesome للأيقونات -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script>
-        // عرض محتوى التطبيق
-        function showSubscriptionApp() {
-            const appContent = document.getElementById('appContent');
-            appContent.innerHTML = `
-                <h2>معرفة الاشتراكات والأسعار</h2>
-                <div id="subscriptionContent">جارٍ تحميل البيانات...</div>
-                <button class="button back-btn" onclick="goBack()">رجوع</button>
-            `;
-            fetchFile('4.4.4.155/files/subscriptions.txt', 'subscriptionContent');
-        }
-
-        function showRenewalApp() {
-            const appContent = document.getElementById('appContent');
-            appContent.innerHTML = `
-                <h2>تجديد الاشتراك</h2>
-                <div id="renewalContent">جارٍ تحميل الرسالة...</div>
-                <button class="button back-btn" onclick="goBack()">رجوع</button>
-            `;
-            fetchFile('4.4.4.155/files/msg.txt', 'renewalContent');
-        }
-
-        function showExpiryApp() {
-            const appContent = document.getElementById('appContent');
-            appContent.innerHTML = `
-                <h2>موعد الانتهاء</h2>
-                <div id="expiryContent">جارٍ تحميل التاريخ...</div>
-                <button class="button back-btn" onclick="goBack()">رجوع</button>
-            `;
-            fetchFile('4.4.4.155/files/finsh.txt', 'expiryContent');
-        }
-
-        // دالة لقراءة محتويات الملف النصي وعرضها
-        function fetchFile(url, elementId) {
-            fetch(`http://${url}`)
-                .then(response => response.text())
+        // تحميل الملف وعرض محتوياته
+        function loadFile(fileName) {
+            fetch('http://4.4.4.155/files/' + fileName)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('فشل تحميل الملف');
+                    }
+                    return response.text();
+                })
                 .then(data => {
-                    document.getElementById(elementId).innerText = data;
+                    document.getElementById('message').innerText = data;
                 })
                 .catch(error => {
-                    document.getElementById(elementId).innerText = 'فشل تحميل الملف';
+                    document.getElementById('message').innerText = 'حدث خطأ: ' + error.message;
                 });
         }
 
-        // دالة للرجوع للصفحة الرئيسية
+        // العودة إلى الشاشة الرئيسية
         function goBack() {
-            document.getElementById('appContent').innerHTML = '';
+            document.getElementById('message').innerText = '';
         }
     </script>
 </body>
