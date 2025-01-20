@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخطط الدراسة التفاعلي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            text-align: center;
+            margin: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .priority-high {
+            background-color: #f8d7da;
+        }
+        .priority-medium {
+            background-color: #fff3cd;
+        }
+        .priority-low {
+            background-color: #d4edda;
+        }
+        .footer {
+            margin-top: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <h1>مخطط الدراسة التفاعلي</h1>
+    
+    <label for="subject">اسم المادة:</label>
+    <input type="text" id="subject" placeholder="أدخل اسم المادة" required>
+    
+    <label for="time">الوقت المخصص (بالدقائق):</label>
+    <input type="number" id="time" placeholder="أدخل الوقت بالدقائق" required>
+    
+    <label for="priority">الأولوية:</label>
+    <select id="priority">
+        <option value="high">عالية</option>
+        <option value="medium">متوسطة</option>
+        <option value="low">منخفضة</option>
+    </select>
+    
+    <button onclick="addSchedule()">إضافة المادة</button>
+    
+    <h3>جدول المراجعة</h3>
+    <table id="scheduleTable">
+        <thead>
+            <tr>
+                <th>اسم المادة</th>
+                <th>الوقت المخصص (دقائق)</th>
+                <th>الأولوية</th>
+                <th>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div class="button-container">
+        <a href="ads.html" target="_blank">اعرف المزيد حول مخطط الدراسة</a>
+    </div>
+
+    <div class="footer">
+        <p>جميع الحقوق محفوظة. تم تصميم هذه الأداة خصيصًا لطلاب كلية الطب.</p>
+    </div>
+
+    <script>
+        // دالة لإضافة المواد إلى الجدول
+        function addSchedule() {
+            const subject = document.getElementById('subject').value;
+            const time = document.getElementById('time').value;
+            const priority = document.getElementById('priority').value;
+
+            if (!subject || !time) {
+                alert("يرجى إدخال جميع البيانات.");
+                return;
+            }
+
+            // إنشاء صف جديد في الجدول
+            const table = document.getElementById('scheduleTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+
+            const priorityClass = getPriorityClass(priority);
+
+            newRow.classList.add(priorityClass);
+
+            newRow.innerHTML = `
+                <td>${subject}</td>
+                <td>${time} دقائق</td>
+                <td>${capitalizeFirstLetter(priority)}</td>
+                <td><button onclick="deleteRow(this)">حذف</button></td>
+            `;
+
+            // إعادة تعيين الحقول بعد إضافة المادة
+            document.getElementById('subject').value = '';
+            document.getElementById('time').value = '';
+            document.getElementById('priority').value = 'high';
+        }
+
+        // دالة لتحديد لون الأولوية
+        function getPriorityClass(priority) {
+            switch (priority) {
+                case 'high': return 'priority-high';
+                case 'medium': return 'priority-medium';
+                case 'low': return 'priority-low';
+            }
+        }
+
+        // دالة لحذف الصف
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        // دالة لتحويل أول حرف إلى كبير
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    </script>
+
+</body>
+</html>
