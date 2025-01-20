@@ -17,48 +17,18 @@
         canvas {
             margin-top: 20px;
             border: 1px solid #ddd;
-            display: none; /* إخفاء الكانفاس بشكل افتراضي */
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-        .input-box {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end; /* محاذاة ليبل وصندوق الكتابة */
-            gap: 5px;
-            width: 60%; /* تحديد عرض الحقول */
-        }
-        label {
-            font-weight: bold;
-            font-size: 18px;
-            font-family: 'TufuliArabic', Arial, sans-serif;
-            text-align: right;
-        }
-        input {
-            padding: 10px;
-            font-size: 18px;
-            text-align: right;
-            font-family: 'TufuliArabic', Arial, sans-serif;
-            width: 100%;
-            border-radius: 5px;
-            border: 1px solid #ccc;
         }
         .button-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            margin-top: 20px;
             gap: 10px;
-            width: 60%; /* تحديد عرض الأزرار */
         }
         button {
             padding: 10px 20px;
             font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
-            width: 48%;
         }
         #generateBtn {
             background-color: #28a745;
@@ -69,7 +39,7 @@
             background-color: #007BFF;
             color: white;
             border: none;
-            display: none; /* إخفاء زر التحميل بشكل افتراضي */
+            cursor: not-allowed;
         }
         #downloadBtn:enabled {
             cursor: pointer;
@@ -90,24 +60,64 @@
         .heart {
             color: red;
         }
+        form label {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        input {
+            text-align: right;
+            font-size: 18px;
+            font-family: 'TufuliArabic', Arial, sans-serif;
+        }
+        /* صندوق الإعلان */
+        .advertisement {
+            background-color: #f8d7da;
+            border: 2px solid #f5c6cb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            cursor: pointer;
+        }
+        .advertisement:hover {
+            background-color: #f5c6cb;
+        }
+        .advertisement i {
+            font-size: 24px;
+            color: #d9534f;
+            margin-left: 10px;
+        }
+        .advertisement p {
+            font-size: 18px;
+            color: #721c24;
+        }
+        .advertisement a {
+            text-decoration: none;
+            color: #d9534f;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-
     <h1>بطاقة تعريف الطالب</h1>
-    <form id="studentForm" class="container">
-        <!-- اسم الطالب -->
-        <div class="input-box">
-            <label for="studentName">اسم الطالب:</label>
+    <form id="studentForm">
+        <label>
+            اسم الطالب:
             <input type="text" id="studentName" required>
-        </div>
-
-        <!-- المرحلة -->
-        <div class="input-box">
-            <label for="studentGrade">المرحلة:</label>
+        </label>
+        <br><br>
+        <label>
+            المرحلة:
             <input type="text" id="studentGrade" required>
-        </div>
-
+        </label>
+        <br><br>
         <div class="button-container">
             <button type="submit" id="generateBtn">إنشاء البطاقة</button>
             <button type="button" id="downloadBtn" disabled>حفظ الصورة</button>
@@ -116,6 +126,17 @@
 
     <canvas id="studentCard"></canvas>
 
+    <!-- إعلان -->
+    <div class="advertisement" onclick="window.open('ads.html', '_blank')">
+        <p>هل تريد تنظيم وقتك؟ استخدم <a href="ads.html" target="_blank">مخطط الدراسة التفاعلي</a></p>
+        <i class="fas fa-bullhorn"></i>
+    </div>
+
+    <footer>
+        <hr>
+        الحقوق محفوظة © باسم المهندس الدكتور أحمد شاكر الفهداوي - كلية الطب <span class="heart">❤</span>
+    </footer>
+
     <script>
         const form = document.getElementById('studentForm');
         const canvas = document.getElementById('studentCard');
@@ -123,63 +144,46 @@
         const ctx = canvas.getContext('2d');
         const generateBtn = document.getElementById('generateBtn');
 
-        // تحميل الصورة الأساسية
         const baseImage = new Image();
         baseImage.src = '1.png'; // استخدام الصورة المرفوعة
 
         baseImage.onload = () => {
             canvas.width = baseImage.width;
             canvas.height = baseImage.height;
+            ctx.drawImage(baseImage, 0, 0);
         };
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            // إعادة رسم الصورة الأساسية
             ctx.drawImage(baseImage, 0, 0);
 
-            // الحصول على بيانات المستخدم
             const studentName = document.getElementById('studentName').value;
             const studentGrade = document.getElementById('studentGrade').value;
 
-            // تحميل الخط المخصص
             const customFont = new FontFace('TufuliArabic', 'url(alfont_com_TufuliArabicDEMO-Medium.ttf)');
             customFont.load().then((font) => {
                 document.fonts.add(font);
 
-                // إعدادات النص
                 ctx.font = 'bold 36px TufuliArabic';
                 ctx.fillStyle = '#000';
-                ctx.textAlign = 'right'; // جعل النص يبدأ من الجهة اليمنى
-                ctx.direction = 'rtl'; // ضبط اتجاه النص ليكون من اليمين إلى اليسار
+                ctx.textAlign = 'right';
+                ctx.direction = 'rtl';
 
-                // إضافة النص إلى الصورة
-                ctx.fillText(studentName, 400, 460); // تعديل الإحداثيات لتناسب مكان النص
-                ctx.fillText(studentGrade, 400, 510); // تعديل الإحداثيات لتناسب مكان النص
+                ctx.fillText(studentName, 400, 460);
+                ctx.fillText(studentGrade, 400, 510);
             });
 
-            // عرض الكانفاس بعد إنشاء البطاقة
-            canvas.style.display = 'block';
-
-            // تفعيل زر حفظ الصورة بعد إنشاء البطاقة
-            downloadBtn.style.display = 'block';
             downloadBtn.disabled = false;
         });
 
-        // وظيفة تحميل الصورة
         downloadBtn.addEventListener('click', () => {
             const image = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.href = image;
-            link.download = 'student_card.png'; // اسم الملف المحفوظ
+            link.download = 'student_card.png';
             link.click();
         });
     </script>
-
-    <footer>
-        <hr>
-        الحقوق محفوظة © باسم المهندس الدكتور أحمد شاكر الفهداوي - كلية الطب <span class="heart">❤</span>
-    </footer>
-
 </body>
 </html>
