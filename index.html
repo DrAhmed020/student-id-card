@@ -60,6 +60,17 @@
         .heart {
             color: red;
         }
+        form label {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* مساحة بين النص وصندوق الكتابة */
+        }
+        input {
+            text-align: right;
+            font-size: 18px;
+            font-family: 'TufuliArabic', Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -116,7 +127,7 @@
                 document.fonts.add(font);
 
                 // إعدادات النص
-                ctx.font = '28px TufuliArabic';
+                ctx.font = 'bold 36px TufuliArabic';
                 ctx.fillStyle = '#000';
                 ctx.textAlign = 'right'; // جعل النص يبدأ من الجهة اليمنى
                 ctx.direction = 'rtl'; // ضبط اتجاه النص ليكون من اليمين إلى اليسار
