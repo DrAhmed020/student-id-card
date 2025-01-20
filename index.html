@@ -24,22 +24,25 @@
             align-items: center;
             gap: 20px;
         }
-        .box {
+        .input-box {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 80%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            background-color: #f9f9f9;
+            flex-direction: column;
+            align-items: flex-end; /* محاذاة ليبل وصندوق الكتابة */
+            gap: 5px;
+            width: 60%; /* تحديد عرض الحقول */
         }
-        .box input {
+        label {
+            font-weight: bold;
+            font-size: 18px;
+            font-family: 'TufuliArabic', Arial, sans-serif;
+            text-align: right;
+        }
+        input {
             padding: 10px;
             font-size: 18px;
             text-align: right;
             font-family: 'TufuliArabic', Arial, sans-serif;
-            width: 70%;
+            width: 100%;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
@@ -47,13 +50,14 @@
             display: flex;
             justify-content: space-between;
             gap: 10px;
-            width: 80%;
+            width: 60%; /* تحديد عرض الأزرار */
         }
         button {
             padding: 10px 20px;
             font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
+            width: 48%;
         }
         #generateBtn {
             background-color: #28a745;
@@ -85,30 +89,114 @@
         .heart {
             color: red;
         }
+
+        /* تصميم نافذة الشات */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .chat-box {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .chat-footer {
+            display: flex;
+            padding: 10px;
+        }
+
+        .chat-footer input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .chat-footer button {
+            background-color: #007BFF;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-footer button:hover {
+            background-color: #0056b3;
+        }
+
+        /* زر فتح الشات */
+        .chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007BFF;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
+
     <h1>بطاقة تعريف الطالب</h1>
     <form id="studentForm" class="container">
         <!-- اسم الطالب -->
-        <div class="box">
-            <label>اسم الطالب:</label>
+        <div class="input-box">
+            <label for="studentName">اسم الطالب:</label>
             <input type="text" id="studentName" required>
         </div>
 
         <!-- المرحلة -->
-        <div class="box">
-            <label>المرحلة:</label>
+        <div class="input-box">
+            <label for="studentGrade">المرحلة:</label>
             <input type="text" id="studentGrade" required>
         </div>
 
         <div class="button-container">
             <button type="submit" id="generateBtn">إنشاء البطاقة</button>
-            <button type="button" id="downloadBtn" disabled>حفظ الصورة</button> <!-- الزر غير مفعل بشكل افتراضي -->
+            <button type="button" id="downloadBtn" disabled>حفظ الصورة</button>
         </div>
     </form>
 
     <canvas id="studentCard"></canvas>
+
+    <!-- نافذة الشات -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">شات الذكاء الصناعي</div>
+        <div class="chat-box" id="chatBox"></div>
+        <div class="chat-footer">
+            <input type="text" id="userInput" placeholder="اكتب رسالتك..." />
+            <button onclick="sendMessage()">إرسال</button>
+        </div>
+    </div>
+
+    <!-- زر فتح الشات -->
+    <div class="chat-toggle" onclick="toggleChat()">💬</div>
 
     <script>
         const form = document.getElementById('studentForm');
@@ -116,6 +204,9 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const ctx = canvas.getContext('2d');
         const generateBtn = document.getElementById('generateBtn');
+        const chatContainer = document.getElementById('chatContainer');
+        const chatBox = document.getElementById('chatBox');
+        const userInput = document.getElementById('userInput');
 
         // تحميل الصورة الأساسية
         const baseImage = new Image();
@@ -165,11 +256,41 @@
             link.download = 'student_card.png'; // اسم الملف المحفوظ
             link.click();
         });
+
+        // فتح وإغلاق نافذة الشات
+        function toggleChat() {
+            chatContainer.style.display = (chatContainer.style.display === 'none' || chatContainer.style.display === '') ? 'flex' : 'none';
+        }
+
+        // إرسال الرسالة
+        function sendMessage() {
+            const message = userInput.value;
+            if (message.trim() === "") return;
+
+            // عرض رسالة المستخدم
+            const userMessageElement = document.createElement('div');
+            userMessageElement.textContent = 'أنت: ' + message;
+            chatBox.appendChild(userMessageElement);
+
+            // مسح مربع النص
+            userInput.value = '';
+
+            // محاكاة رد الذكاء الصناعي
+            setTimeout(() => {
+                const aiMessageElement = document.createElement('div');
+                aiMessageElement.textContent = 'الذكاء الصناعي: مرحباً! كيف يمكنني مساعدتك؟';
+                chatBox.appendChild(aiMessageElement);
+
+                // التمرير لأسفل لعرض الرسالة الجديدة
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
+        }
     </script>
 
     <footer>
         <hr>
         الحقوق محفوظة © باسم المهندس الدكتور أحمد شاكر الفهداوي - كلية الطب <span class="heart">❤</span>
     </footer>
+
 </body>
 </html>
