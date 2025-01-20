@@ -17,6 +17,7 @@
         canvas {
             margin-top: 20px;
             border: 1px solid #ddd;
+            display: none; /* إخفاء الصورة في البداية */
         }
         .button-container {
             display: flex;
@@ -40,6 +41,7 @@
             color: white;
             border: none;
             cursor: not-allowed;
+            display: none; /* إخفاء زر التحميل في البداية */
         }
         #downloadBtn:enabled {
             cursor: pointer;
@@ -62,16 +64,29 @@
         }
         form label {
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
             gap: 10px;
+            margin-bottom: 10px;
+            font-family: 'TufuliArabic', Arial, sans-serif;
+            font-size: 18px;
         }
         input {
             text-align: right;
             font-size: 18px;
             font-family: 'TufuliArabic', Arial, sans-serif;
+            width: 200px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
-        /* صندوق الإعلان */
+        /* كروب بوكس */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
         .advertisement {
             background-color: #f8d7da;
             border: 2px solid #f5c6cb;
@@ -108,25 +123,27 @@
 <body>
     <h1>بطاقة تعريف الطالب</h1>
     <form id="studentForm">
-        <label>
-            اسم الطالب:
+        <!-- كروب بوكس مع ليبل اسم الطالب وصندوق النص -->
+        <div class="form-group">
+            <label for="studentName">اسم الطالب:</label>
             <input type="text" id="studentName" required>
-        </label>
-        <br><br>
-        <label>
-            المرحلة:
+        </div>
+        <!-- كروب بوكس مع ليبل المرحلة وصندوق النص -->
+        <div class="form-group">
+            <label for="studentGrade">المرحلة:</label>
             <input type="text" id="studentGrade" required>
-        </label>
-        <br><br>
+        </div>
+
         <div class="button-container">
             <button type="submit" id="generateBtn">إنشاء البطاقة</button>
             <button type="button" id="downloadBtn" disabled>حفظ الصورة</button>
         </div>
     </form>
 
+    <!-- صورة البطاقة التي تظهر بعد إنشاء البطاقة -->
     <canvas id="studentCard"></canvas>
 
-    <!-- إعلان -->
+    <!-- إعلان مخطط الدراسة التفاعلي -->
     <div class="advertisement" onclick="window.open('ads.html', '_blank')">
         <p>هل تريد تنظيم وقتك؟ استخدم <a href="ads.html" target="_blank">مخطط الدراسة التفاعلي</a></p>
         <i class="fas fa-bullhorn"></i>
@@ -150,12 +167,16 @@
         baseImage.onload = () => {
             canvas.width = baseImage.width;
             canvas.height = baseImage.height;
-            ctx.drawImage(baseImage, 0, 0);
         };
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
+            // إظهار الصورة بعد ضغط زر إنشاء البطاقة
+            canvas.style.display = 'block';
+            downloadBtn.style.display = 'inline-block'; // إظهار زر التحميل بعد إنشاء البطاقة
+
+            // إعادة رسم الصورة الأساسية
             ctx.drawImage(baseImage, 0, 0);
 
             const studentName = document.getElementById('studentName').value;
