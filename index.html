@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,11 +18,36 @@
             margin-top: 20px;
             border: 1px solid #ddd;
         }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 80%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .box input {
+            padding: 10px;
+            font-size: 18px;
+            text-align: right;
+            font-family: 'TufuliArabic', Arial, sans-serif;
+            width: 70%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
         .button-container {
             display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 10px; /* إضافة مساحة بين الأزرار */
+            justify-content: space-between;
+            gap: 10px;
+            width: 80%;
         }
         button {
             padding: 10px 20px;
@@ -60,32 +85,23 @@
         .heart {
             color: red;
         }
-        form label {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px; /* مساحة بين النص وصندوق الكتابة */
-        }
-        input {
-            text-align: right;
-            font-size: 18px;
-            font-family: 'TufuliArabic', Arial, sans-serif;
-        }
     </style>
 </head>
 <body>
     <h1>بطاقة تعريف الطالب</h1>
-    <form id="studentForm">
-        <label>
-            اسم الطالب:
+    <form id="studentForm" class="container">
+        <!-- اسم الطالب -->
+        <div class="box">
+            <label>اسم الطالب:</label>
             <input type="text" id="studentName" required>
-        </label>
-        <br><br>
-        <label>
-            المرحلة:
+        </div>
+
+        <!-- المرحلة -->
+        <div class="box">
+            <label>المرحلة:</label>
             <input type="text" id="studentGrade" required>
-        </label>
-        <br><br>
+        </div>
+
         <div class="button-container">
             <button type="submit" id="generateBtn">إنشاء البطاقة</button>
             <button type="button" id="downloadBtn" disabled>حفظ الصورة</button> <!-- الزر غير مفعل بشكل افتراضي -->
