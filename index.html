@@ -3,135 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ملاحظات الطلاب</title>
-    <link rel="stylesheet" href="styles.css">
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
-        // إعداد Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDEWffPfy-fljp32H8AjemraCau-f9JN-M",
-            authDomain: "student-notes-app-3d196.firebaseapp.com",
-            projectId: "student-notes-app-3d196",
-            storageBucket: "student-notes-app-3d196.appspot.com",
-            messagingSenderId: "99837564904",
-            appId: "1:99837564904:web:6b880e2b80e439c8fcf65d",
-            measurementId: "G-N63JWQNTZF"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // تحميل أحدث ملاحظة
-        async function loadLatestNote() {
-            const latestNoteContainer = document.getElementById("latestNoteContainer");
-            latestNoteContainer.innerHTML = "جارٍ تحميل أحدث ملاحظة...";
-
-            try {
-                const latestNoteQuery = query(
-                    collection(db, "notes"),
-                    orderBy("timestamp", "desc"),
-                    limit(1)
-                );
-                const latestNoteSnapshot = await getDocs(latestNoteQuery);
-
-                if (!latestNoteSnapshot.empty) {
-                    latestNoteSnapshot.forEach((doc) => {
-                        const note = doc.data();
-                        latestNoteContainer.innerHTML = `
-                            <div class="note-box">
-                                <h3>أحدث ملاحظة</h3>
-                                <p><strong>الاسم:</strong> ${note.name}</p>
-                                <p><strong>المرحلة:</strong> ${note.grade}</p>
-                                <p><strong>الملاحظة:</strong> ${note.note}</p>
-                                ${
-                                    note.image
-                                        ? `<img src="${note.image}" alt="صورة" style="max-width: 100%; border-radius: 5px; margin-top: 10px;">`
-                                        : ""
-                                }
-                            </div>
-                        `;
-                    });
-                } else {
-                    latestNoteContainer.innerHTML = `<p>لا توجد ملاحظات منشورة حتى الآن.</p>`;
-                }
-            } catch (error) {
-                console.error("خطأ أثناء تحميل أحدث ملاحظة:", error);
-                latestNoteContainer.innerHTML = "حدث خطأ أثناء تحميل أحدث ملاحظة.";
-            }
-        }
-
-        // دالة لإضافة ملاحظة جديدة
-        async function addNoteToFirestore(name, grade, note, imageURL) {
-            try {
-                await addDoc(collection(db, "notes"), {
-                    name,
-                    grade,
-                    note,
-                    image: imageURL || null,
-                    timestamp: Date.now()
-                });
-                alert("تمت إضافة الملاحظة بنجاح!");
-                loadLatestNote(); // تحديث أحدث ملاحظة بعد الإضافة
-            } catch (error) {
-                console.error("خطأ أثناء الإضافة:", error);
-                alert("حدث خطأ أثناء إضافة الملاحظة.");
-            }
-        }
-
-        // التعامل مع إرسال النموذج
-        document.getElementById("noteForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById("name").value;
-            const grade = document.getElementById("grade").value;
-            const note = document.getElementById("note").value;
-            const imageInput = document.getElementById("image");
-            let imageURL = null;
-
-            if (imageInput.files.length > 0) {
-                const file = imageInput.files[0];
-                const reader = new FileReader();
-
-                reader.onload = async (e) => {
-                    imageURL = e.target.result;
-                    await addNoteToFirestore(name, grade, note, imageURL);
-                    document.getElementById("noteForm").reset();
-                };
-
-                reader.readAsDataURL(file);
-            } else {
-                await addNoteToFirestore(name, grade, note, imageURL);
-                document.getElementById("noteForm").reset();
-            }
-        });
-
-        // تحميل أحدث ملاحظة عند فتح الصفحة
-        window.onload = loadLatestNote;
-    </script>
+    <title>بطاقة تعريف الطالب</title>
     <style>
+        @font-face {
+            font-family: 'TufuliArabic';
+            src: url('alfont_com_TufuliArabicDEMO-Medium.ttf') format('truetype');
+        }
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 20px;
-            background-color: #f4f4f4;
         }
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-        .note-box {
-            background: #ffffff;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
+        canvas {
             margin-top: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            display: none; /* إخفاء الصورة في البداية */
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #generateBtn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        #downloadBtn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: not-allowed;
+            display: none; /* إخفاء زر التحميل في البداية */
+        }
+        #downloadBtn:enabled {
+            cursor: pointer;
+        }
+        #downloadBtn:hover {
+            background-color: #0056b3;
+        }
+        #generateBtn:hover {
+            background-color: #218838;
         }
         footer {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 20px;
             font-family: Arial, sans-serif;
             font-size: 14px;
             color: #555;
@@ -139,32 +62,149 @@
         .heart {
             color: red;
         }
+        form label {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-family: 'TufuliArabic', Arial, sans-serif;
+            font-size: 18px;
+        }
+        input {
+            text-align: right;
+            font-size: 18px;
+            font-family: 'TufuliArabic', Arial, sans-serif;
+            width: 200px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        /* كروب بوكس */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .advertisement {
+            background-color: #f8d7da;
+            border: 2px solid #f5c6cb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            cursor: pointer;
+        }
+        .advertisement:hover {
+            background-color: #f5c6cb;
+        }
+        .advertisement i {
+            font-size: 24px;
+            color: #d9534f;
+            margin-left: 10px;
+        }
+        .advertisement p {
+            font-size: 18px;
+            color: #721c24;
+        }
+        .advertisement a {
+            text-decoration: none;
+            color: #d9534f;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>ملاحظات الطلاب</h1>
-        <!-- زر عرض الملاحظات -->
-        <a href="notes.html" style="text-decoration: none;">
-            <button style="margin-bottom: 20px;">عرض ملاحظات الطلاب</button>
-        </a>
+    <h1>بطاقة تعريف الطالب</h1>
+    <form id="studentForm">
+        <!-- كروب بوكس مع ليبل اسم الطالب وصندوق النص -->
+        <div class="form-group">
+            <label for="studentName">اسم الطالب:</label>
+            <input type="text" id="studentName" required>
+        </div>
+        <!-- كروب بوكس مع ليبل المرحلة وصندوق النص -->
+        <div class="form-group">
+            <label for="studentGrade">المرحلة:</label>
+            <input type="text" id="studentGrade" required>
+        </div>
 
-        <!-- نموذج إضافة الملاحظات -->
-        <form id="noteForm">
-            <input type="text" id="name" placeholder="الاسم" required>
-            <input type="text" id="grade" placeholder="المرحلة" required>
-            <textarea id="note" placeholder="اكتب ملاحظتك هنا" required></textarea>
-            <input type="file" id="image" accept="image/*">
-            <button type="submit">إضافة الملاحظة</button>
-        </form>
+        <div class="button-container">
+            <button type="submit" id="generateBtn">إنشاء البطاقة</button>
+            <button type="button" id="downloadBtn" disabled>حفظ الصورة</button>
+        </div>
+    </form>
 
-        <!-- عرض أحدث ملاحظة -->
-        <div id="latestNoteContainer"></div>
+    <!-- صورة البطاقة التي تظهر بعد إنشاء البطاقة -->
+    <canvas id="studentCard"></canvas>
+
+    <!-- إعلان مخطط الدراسة التفاعلي -->
+    <div class="advertisement" onclick="window.open('ads.html', '_blank')">
+        <p>هل تريد تنظيم وقتك؟ استخدم <a href="ads.html" target="_blank">مخطط الدراسة التفاعلي</a></p>
+        <i class="fas fa-bullhorn"></i>
     </div>
 
     <footer>
         <hr>
-        تم تصميم هذا السكربت بواسطة طالب الطب المهندس أحمد شاكر محمود الفهداوي - كلية الطب <span class="heart">❤</span>
+        الحقوق محفوظة © باسم المهندس الدكتور أحمد شاكر الفهداوي - كلية الطب <span class="heart">❤</span>
     </footer>
+
+    <script>
+        const form = document.getElementById('studentForm');
+        const canvas = document.getElementById('studentCard');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const ctx = canvas.getContext('2d');
+        const generateBtn = document.getElementById('generateBtn');
+
+        const baseImage = new Image();
+        baseImage.src = '1.png'; // استخدام الصورة المرفوعة
+
+        baseImage.onload = () => {
+            canvas.width = baseImage.width;
+            canvas.height = baseImage.height;
+        };
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // إظهار الصورة بعد ضغط زر إنشاء البطاقة
+            canvas.style.display = 'block';
+            downloadBtn.style.display = 'inline-block'; // إظهار زر التحميل بعد إنشاء البطاقة
+
+            // إعادة رسم الصورة الأساسية
+            ctx.drawImage(baseImage, 0, 0);
+
+            const studentName = document.getElementById('studentName').value;
+            const studentGrade = document.getElementById('studentGrade').value;
+
+            const customFont = new FontFace('TufuliArabic', 'url(alfont_com_TufuliArabicDEMO-Medium.ttf)');
+            customFont.load().then((font) => {
+                document.fonts.add(font);
+
+                ctx.font = 'bold 36px TufuliArabic';
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'right';
+                ctx.direction = 'rtl';
+
+                ctx.fillText(studentName, 400, 460);
+                ctx.fillText(studentGrade, 400, 510);
+            });
+
+            downloadBtn.disabled = false;
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const image = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = 'student_card.png';
+            link.click();
+        });
+    </script>
 </body>
 </html>
