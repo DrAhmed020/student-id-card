@@ -88,8 +88,8 @@
             margin-bottom: 20px;
         }
         .advertisement {
-            background-color: #f8d7da;
-            border: 2px solid #f5c6cb;
+            background-color: #e7f3fe;
+            border: 2px solid #bee3f8;
             padding: 20px;
             border-radius: 8px;
             margin-top: 30px;
@@ -100,22 +100,24 @@
             margin-left: auto;
             margin-right: auto;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
         .advertisement:hover {
-            background-color: #f5c6cb;
+            background-color: #d8ebf9;
         }
         .advertisement i {
             font-size: 24px;
-            color: #d9534f;
+            color: #007BFF;
             margin-left: 10px;
         }
         .advertisement p {
             font-size: 18px;
-            color: #721c24;
+            color: #004085;
+            margin: 0;
         }
         .advertisement a {
             text-decoration: none;
-            color: #d9534f;
+            color: #007BFF;
             font-weight: bold;
         }
     </style>
@@ -143,10 +145,10 @@
     <!-- صورة البطاقة التي تظهر بعد إنشاء البطاقة -->
     <canvas id="studentCard"></canvas>
 
-    <!-- إعلان مخطط الدراسة التفاعلي -->
-    <div class="advertisement" onclick="window.open('ads.html', '_blank')">
-        <p>هل تريد تنظيم وقتك؟ استخدم <a href="ads.html" target="_blank">مخطط الدراسة التفاعلي</a></p>
-        <i class="fas fa-bullhorn"></i>
+    <!-- إعلان منصة آراء الطلبة وشكاواهم ومقترحاتهم -->
+    <div class="advertisement" onclick="window.location.href='/'">
+        <i class="fas fa-comments"></i>
+        <p>شاركنا رأيك وشكاواك من خلال <a href="/">منصة آراء الطلبة</a></p>
     </div>
 
     <footer>
